@@ -1,6 +1,8 @@
 import React from 'react'
 import  { useState }  from 'react'
+import PropTypes from 'prop-types'
 import  Star  from './Star'
+
 const containerStyle = {
     display: 'flex',
     alignItems: 'center',
@@ -10,16 +12,37 @@ const starContainairStyle = {
     display: 'flex',
 
 }
-const textStyle = {
-    lineHight: '1',
-    margin: '0',
+StartRating.propTypes={
+    maxRating: PropTypes.number,
+    color: PropTypes.string,
+    size: PropTypes.number,
+    messages: PropTypes.array,
+    defaultRating: PropTypes.number,
+    onSetRating: PropTypes.func
 }
-export default function StartRating({ maxRating=5 }) {
-    const[rating, setRating]= useState(0)
+export default function StartRating({ 
+    maxRating=5, 
+    color='#fcc419', 
+    size=48,
+    messages=[], 
+    defaultRating=0,
+    onSetRating,
+    
+}) {
+    const[rating, setRating]= useState(defaultRating)
     const[tempRating, setTempRating]= useState(0)
     function handleRating(rating) {
-        setRating(rating)
+        setRating(rating);
+        onSetRating(rating);
     }
+        const textStyle = {
+            lineHeight:'1',
+            margin:0,
+            color,
+            fontSize:`${size/1.5}px`,
+            
+        }
+    
   return (
     <div style={containerStyle}>
         <div style={starContainairStyle}>{Array.from({length: maxRating}, (_, i) => (
@@ -28,10 +51,12 @@ export default function StartRating({ maxRating=5 }) {
             full={tempRating ? tempRating >= i + 1 : rating >= i + 1}
             onHoverIn={()=>setTempRating(i+1)}
             onHoverOut={()=>setTempRating(0)}
+            color={color}
+            size={size}
             />
         ))}
             </div>
-        <p style={textStyle}>{tempRating || rating ||''}</p>
+        <p style={textStyle}>{messages.length === maxRating ? messages[tempRating ? tempRating-1 : rating-1] : tempRating ? messages[rating-1] : tempRating || rating || ''}</p>
     </div>
   )
 }
